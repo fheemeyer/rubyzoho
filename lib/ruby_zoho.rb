@@ -188,7 +188,8 @@ module RubyZoho
     end
 
     def self.get_from_custom_view(cv_name, to_index=1, from_index=200)
-      RubyZoho.configuration.api.get_records_from_custom_view(self.module_name, cv_name, to_index, from_index)
+      r = RubyZoho.configuration.api.get_records_from_custom_view(self.module_name, cv_name, to_index, from_index)
+      r.map { |e| new(e) }
     end
 
     def primary_key

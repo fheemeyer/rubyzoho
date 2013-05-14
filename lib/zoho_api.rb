@@ -203,6 +203,28 @@ module ZohoApi
       to_hash_with_id(x_r, module_name)[0]
     end
 
+    def update_records(module_name, objects)
+      x = REXML::Document.new
+      data = x.add_element module_name
+      count = 0
+      objects.each do |fields_values_hash|
+        count = count + 1
+        row = data.add_element('row', {'no' => count})
+        fields_values_hash.each_pair { |k, v| add_field(row, ApiUtils.symbol_to_string(k), v) }
+      end
+      r = self.class.post(create_url(module_name, 'updateRecords'),
+          :query => { :authtoken => @auth_token,
+                      :scope => 'crmapi', :version => 4,
+                      :xmlData => x })
+      check_for_errors(r)
+      x_r = REXML::Document.new(r.body).elements.to_a('//recorddetail')
+      to_hash_with_id(x_r, module_name)[0]
+    end
+
+    def user_fields
+      @@module_fields[:users] = users[0].keys
+    end
+
     def users(user_type = 'AllUsers')
       return @@users unless @@users == [] || user_type == 'Refresh'
       r = self.class.get(create_url('Users', 'getUsers'),
