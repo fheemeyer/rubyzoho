@@ -274,8 +274,6 @@ module RubyZoho
         super
       end
     end
-
     Kernel.const_set 'User', c
 
-  end
 end
